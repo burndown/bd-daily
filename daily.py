@@ -45,14 +45,12 @@ MESSAGES = ['又到了新的一天了！']
 
 # get today's weather
 # city hard coded in API URL. You may change it based on city code list below
-def make_weather(city_code):
+def make_weather_today(city_code):
     print(f'Start making weather...')
     WEATHER_API = f'http://t.weather.sojson.com/api/weather/city/{city_code}'
     # https://github.com/baichengzhou/weather.api/blob/master/src/main/resources/citycode-2019-08-23.json to find the city code
     DEFAULT_WEATHER = "未查询到天气，好可惜啊"
     WEATHER_TEMPLATE_today = "今天是{date} {week}，{city}的天气是{type}，{high}，{low}，空气质量指数{aqi}"
-    WEATHER_TEMPLATE_tmr   = "Tmr{date} {week}，{city}的天气是{type}，{high}，{low}，空气质量指数{aqi}"
-
     try:
         r = requests.get(WEATHER_API)
         if r.ok:
@@ -62,18 +60,33 @@ def make_weather(city_code):
                 type=r.json().get("data").get("forecast")[0].get("type"), high=r.json().get("data").get("forecast")[0].get("high"),
                 low=r.json().get("data").get("forecast")[0].get("low"), aqi=r.json().get("data").get("forecast")[0].get("aqi")
             )
+            return weather_today
+        return DEFAULT_WEATHER
+    except Exception as e:
+        print(type(e), e)
+        return DEFAULT_WEATHER
+
+def make_weather_tmr(city_code):
+    print(f'Start making weather...')
+    WEATHER_API = f'http://t.weather.sojson.com/api/weather/city/{city_code}'
+    # https://github.com/baichengzhou/weather.api/blob/master/src/main/resources/citycode-2019-08-23.json to find the city code
+    DEFAULT_WEATHER = "未查询到天气，好可惜啊"
+    WEATHER_TEMPLATE_tmr   = "Tmr{date} {week}，{city}的天气是{type}，{high}，{low}，空气质量指数{aqi}"
+
+    try:
+        r = requests.get(WEATHER_API)
+        if r.ok:
             weather_tmr = WEATHER_TEMPLATE_tmr.format(
                 date=r.json().get("data").get("forecast")[1].get("ymd"), week=r.json().get("data").get("forecast")[1].get("week"),
                 city=r.json().get("cityInfo").get("city"),
                 type=r.json().get("data").get("forecast")[1].get("type"), high=r.json().get("data").get("forecast")[1].get("high"),
                 low=r.json().get("data").get("forecast")[1].get("low"), aqi=r.json().get("data").get("forecast")[1].get("aqi")
             )
-            return weather_today, weather_tmr
+            return weather_tmr
         return DEFAULT_WEATHER
     except Exception as e:
         print(type(e), e)
         return DEFAULT_WEATHER
-
 # get random poem
 # return sentence(used for make pic) and poem(sentence with author and origin)
 
@@ -211,7 +224,8 @@ def make_message(messages):
 def main():
     print("Main started...")
     # default process the poem, image and weather.
-    MESSAGES.append(make_weather(WEATHER_CITY_CODE))
+    MESSAGES.append(make_weather_today(WEATHER_CITY_CODE))
+    MESSAGES.append(make_weather_tmr(WEATHER_CITY_CODE))
     image_url, poem_message = make_poem()
     MESSAGES.append(poem_message)
 
