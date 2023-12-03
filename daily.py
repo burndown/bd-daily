@@ -56,13 +56,13 @@ def make_weather(city_code):
     try:
         r = requests.get(WEATHER_API)
         if r.ok:
-            weather_today = WEATHER_TEMPLATE.format(
+            weather_today = WEATHER_TEMPLATE_today.format(
                 date=r.json().get("data").get("forecast")[0].get("ymd"), week=r.json().get("data").get("forecast")[0].get("week"),
                 city=r.json().get("cityInfo").get("city"),
                 type=r.json().get("data").get("forecast")[0].get("type"), high=r.json().get("data").get("forecast")[0].get("high"),
                 low=r.json().get("data").get("forecast")[0].get("low"), aqi=r.json().get("data").get("forecast")[0].get("aqi")
             )
-            weather_tmr = WEATHER_TEMPLATE.format(
+            weather_tmr = WEATHER_TEMPLATE_tmr.format(
                 date=r.json().get("data").get("forecast")[1].get("ymd"), week=r.json().get("data").get("forecast")[1].get("week"),
                 city=r.json().get("cityInfo").get("city"),
                 type=r.json().get("data").get("forecast")[1].get("type"), high=r.json().get("data").get("forecast")[1].get("high"),
