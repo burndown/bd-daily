@@ -50,18 +50,25 @@ def make_weather(city_code):
     WEATHER_API = f'http://t.weather.sojson.com/api/weather/city/{city_code}'
     # https://github.com/baichengzhou/weather.api/blob/master/src/main/resources/citycode-2019-08-23.json to find the city code
     DEFAULT_WEATHER = "未查询到天气，好可惜啊"
-    WEATHER_TEMPLATE = "今天是{date} {week}，{city}的天气是{type}，{high}，{low}，空气质量指数{aqi}"
+    WEATHER_TEMPLATE_today = "今天是{date} {week}，{city}的天气是{type}，{high}，{low}，空气质量指数{aqi}"
+    WEATHER_TEMPLATE_tmr   = "Tmr{date} {week}，{city}的天气是{type}，{high}，{low}，空气质量指数{aqi}"
 
     try:
         r = requests.get(WEATHER_API)
         if r.ok:
-            weather = WEATHER_TEMPLATE.format(
+            weather_today = WEATHER_TEMPLATE.format(
                 date=r.json().get("data").get("forecast")[0].get("ymd"), week=r.json().get("data").get("forecast")[0].get("week"),
                 city=r.json().get("cityInfo").get("city"),
                 type=r.json().get("data").get("forecast")[0].get("type"), high=r.json().get("data").get("forecast")[0].get("high"),
                 low=r.json().get("data").get("forecast")[0].get("low"), aqi=r.json().get("data").get("forecast")[0].get("aqi")
             )
-            return weather
+            weather_tmr = WEATHER_TEMPLATE.format(
+                date=r.json().get("data").get("forecast")[1].get("ymd"), week=r.json().get("data").get("forecast")[1].get("week"),
+                city=r.json().get("cityInfo").get("city"),
+                type=r.json().get("data").get("forecast")[1].get("type"), high=r.json().get("data").get("forecast")[1].get("high"),
+                low=r.json().get("data").get("forecast")[1].get("low"), aqi=r.json().get("data").get("forecast")[1].get("aqi")
+            )
+            return weather_today, weather_tmr
         return DEFAULT_WEATHER
     except Exception as e:
         print(type(e), e)
