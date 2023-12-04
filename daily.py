@@ -45,7 +45,7 @@ MESSAGES = ['又到了新的一天了！']
 
 # get today's weather
 # city hard coded in API URL. You may change it based on city code list below
-def make_weather_today(city_code):
+def make_weather(city_code):
     print(f'Start making weather...')
     WEATHER_API = f'http://t.weather.sojson.com/api/weather/city/{city_code}'
     # https://github.com/baichengzhou/weather.api/blob/master/src/main/resources/citycode-2019-08-23.json to find the city code
