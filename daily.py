@@ -50,6 +50,7 @@ def make_weather(city_code):
     WEATHER_API = f'http://t.weather.sojson.com/api/weather/city/{city_code}'
     # https://github.com/baichengzhou/weather.api/blob/master/src/main/resources/citycode-2019-08-23.json to find the city code
     DEFAULT_WEATHER = "未查询到天气，好可惜啊"
+    SEVERE_WEATHER_TYPES = ["雨", "雪", "大风"]
     WEATHER_TEMPLATE = "今天是{date} {week}，{city}的天气是{type}，{high}，{low}，空气质量指数{aqi}\
                         明天是{date_tmr} {week_tmr}，{city_tmr}的天气是{type_tmr}，{high_tmr}，{low_tmr}，空气质量指数{aqi_tmr}"
     try:
@@ -65,9 +66,29 @@ def make_weather(city_code):
                 city_tmr=r.json().get("cityInfo").get("city"),
                 type_tmr=r.json().get("data").get("forecast")[1].get("type"), high_tmr=r.json().get("data").get("forecast")[1].get("high"),
                 low_tmr=r.json().get("data").get("forecast")[1].get("low"), aqi_tmr=r.json().get("data").get("forecast")[1].get("aqi")
-
             )
             return weather
+        return DEFAULT_WEATHER
+    except Exception as e:
+        print(type(e), e)
+        return DEFAULT_WEATHER
+
+def make_weather_surprise(city_code):
+    print(f'Start making weather...')
+    WEATHER_API = f'http://t.weather.sojson.com/api/weather/city/{city_code}'
+    # https://github.com/baichengzhou/weather.api/blob/master/src/main/resources/citycode-2019-08-23.json to find the city code
+    DEFAULT_WEATHER = "未查询到天气，好可惜啊"
+    SEVERE_WEATHER_TYPES = ["雨", "雪", "大风"]
+   # WEATHER_TEMPLATE = ""
+
+    try:
+        r = requests.get(WEATHER_API)
+        if r.ok:
+             for day in data[:7]:  # Check the weather for the next 7 days
+                weather_type = day.get("type")
+                if any(severe_weather in weather_type for severe_weather in SEVERE_WEATHER_TYPES):
+                    severe_weather_days.append(f"{day.get('ymd')} ({day.get('week')}): {weather_type}")
+                return severe_weather_days if severe_weather_days else "未来七天内没有雨雪或大风天气。"
         return DEFAULT_WEATHER
     except Exception as e:
         print(type(e), e)
@@ -211,7 +232,7 @@ def main():
     print("Main started...")
     # default process the poem, image and weather.
     MESSAGES.append(make_weather(WEATHER_CITY_CODE))
-#    MESSAGES.append(make_weather_tmr(WEATHER_CITY_CODE))
+    MESSAGES.append(make_weather_surprise(WEATHER_CITY_CODE))
     image_url, poem_message = make_poem()
     MESSAGES.append(poem_message)
 
