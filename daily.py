@@ -137,6 +137,13 @@ def make_pic_from_openai(sentence):
 def make_pic_from_bing(sentence, bing_cookie):
     # for bing image when dall-e3 open drop this function
     i = ImageGen(bing_cookie)
+    prompt = f"revise `{sentence}` to a DALL-E prompt"
+    completion = client.chat.completions.create(
+        messages=[{"role": "user", "content": prompt}],
+        model="gpt-4-1106-preview",
+    )
+    sentence = completion.choices[0].message.content.encode("utf8").decode()
+    print(f"revies: {sentence}")
     images = i.get_images(sentence)
     return images, "Image Powered by Bing DALL.E-3"
 
