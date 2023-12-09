@@ -11,6 +11,8 @@ from BingImageCreator import ImageGen
 
 from quota import make_quota
 from todoist import make_todoist
+client = OpenAI()
+
 
 load_dotenv()
 
